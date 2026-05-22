@@ -156,7 +156,7 @@
         </div>
         <div class="footer-col">
             <h4 class="footer-col-titulo">Boletín de novedades</h4>
-            <p>Recibe todas nuestras novedades en tu email</p>
+            <p>Recibe sus historias por correo cada semana</p>
             <form class="footer-boletin" onsubmit="return false;">
                 <input type="email" placeholder="Tu email">
                 <button type="submit">Enviar</button>
@@ -178,9 +178,11 @@
     <div class="footer-inferior">
         <span>&copy; {{ date('Y') }} NombrePaginaWeb. Todos los derechos reservados.</span>
         <span>
-            <a href="{{ route('sobre_nosotros') }}">Sobre nosotros</a>
+            <a href="#">Política de privacidad</a>
             &nbsp;|&nbsp;
-            <a href="{{ route('contacto') }}">Contacto</a>
+            <a href="#">Política de cookies</a>
+            &nbsp;|&nbsp;
+            <a href="#">Aviso legal</a>
             &nbsp;|&nbsp;
             <a href="/como_se_hizo.pdf" target="_blank">Informe técnico (PDF)</a>
         </span>
