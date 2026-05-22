@@ -50,8 +50,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/fotos/{foto}', [AdminAnimalController::class, 'destroyFoto'])->name('fotos.destroy');
 
     Route::get('/solicitudes', [AdminSolicitudController::class, 'index'])->name('solicitudes.index');
+    Route::get('/solicitudes/{solicitud}', [AdminSolicitudController::class, 'show'])->name('solicitudes.show');
     Route::post('/solicitudes/{solicitud}/aprobar', [AdminSolicitudController::class, 'aprobar'])->name('solicitudes.aprobar');
     Route::post('/solicitudes/{solicitud}/rechazar', [AdminSolicitudController::class, 'rechazar'])->name('solicitudes.rechazar');
+    Route::delete('/solicitudes/{solicitud}', [AdminSolicitudController::class, 'destroy'])->name('solicitudes.destroy');
 
     Route::get('/mensajes', [AdminMensajeController::class, 'index'])->name('mensajes.index');
     Route::post('/mensajes/{mensaje}/leido', [AdminMensajeController::class, 'marcarLeido'])->name('mensajes.leido');
