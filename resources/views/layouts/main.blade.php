@@ -11,9 +11,15 @@
 
 <header>
     <div class="header-top">
+        
         <a href="{{ route('home') }}" class="logo">NombrePaginaWeb</a>
 
-        <div class="header-usuario">
+</header>
+
+<div class="subheader">
+    <button id="btn-sidebar" class="btn-hamburguesa">&#9776;</button>
+    
+    <div class="subheader-sesion">
             @auth
                 <div class="header-dropdown">
                     <button class="header-dropdown-toggle" id="header-dropdown-btn" aria-expanded="false" aria-haspopup="true">
@@ -38,13 +44,13 @@
                             </div>
                         </div>
                         <hr class="header-dropdown-sep">
-                        <a href="{{ route('perfil') }}" class="header-dropdown-item">&#128100; Mi perfil</a>
-                        <a href="{{ route('configuracion') }}" class="header-dropdown-item">&#9881; Configuración de cuenta</a>
-                        <a href="{{ route('mis_solicitudes') }}" class="header-dropdown-item">&#128196; Mis solicitudes</a>
+                        <a href="{{ route('perfil') }}" class="header-dropdown-item">Mi perfil</a>
+                        <a href="{{ route('configuracion') }}" class="header-dropdown-item">Configuración de cuenta</a>
+                        <a href="{{ route('mis_solicitudes') }}" class="header-dropdown-item">Mis solicitudes</a>
                         <hr class="header-dropdown-sep">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="header-dropdown-item header-dropdown-logout">&#10148; Cerrar sesión</button>
+                            <button type="submit" class="header-dropdown-item header-dropdown-logout">Cerrar sesión</button>
                         </form>
                     </div>
                 </div>
@@ -55,31 +61,27 @@
             @endauth
         </div>
     </div>
+</div>
 
-    <nav class="top-nav" aria-label="Navegación principal">
-        <ul>
-            <li><a href="{{ route('home') }}">Inicio</a></li>
-            <li><a href="{{ route('home') }}">Adoptar</a></li>
-            @auth
-                @if(Auth::user()->es_admin)
-                    <li><a href="{{ route('admin.animales.index') }}">Administración</a></li>
-                @endif
-            @endauth
-            <li><a href="{{ route('contacto') }}">Contacto</a></li>
-        </ul>
-    </nav>
-</header>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-<div class="layout">
+<aside id="sidebar" aria-label="Menú lateral">
+    <button id="btn-cerrar-sidebar" class="sidebar-cerrar">&times;</button>
 
-    <aside aria-label="Menú lateral">
         <div class="sidebar-section">
-            <h3>Explorar</h3>
             <ul>
-                <li><a href="{{ route('home') }}">Todos los animales</a></li>
-                <li><a href="{{ route('home', ['especie' => 'Perro']) }}">Perros</a></li>
-                <li><a href="{{ route('home', ['especie' => 'Gato']) }}">Gatos</a></li>
-                <li><a href="{{ route('home', ['especie' => 'Otro']) }}">Otros</a></li>
+                <li><a href="{{ route('home') }}">Inicio</a></li>
+                <li class="sidebar-grupo">
+                    <span class="sidebar-grupo-titulo">Adoptar</span>
+                    <ul class="sidebar-subgrupo">
+                        <li><a href="{{ route('home') }}">Todos</a></li>
+                        <li><a href="{{ route('home', ['especie' => 'Perro']) }}">Perros</a></li>
+                        <li><a href="{{ route('home', ['especie' => 'Gato']) }}">Gatos</a></li>
+                        <li><a href="{{ route('home', ['especie' => 'Otro']) }}">Otros</a></li>
+                    </ul>
+                </li>
+                <li><a href="{{ route('contacto') }}">Contacto</a></li>
+                <li><a href="{{ route('sobre_nosotros') }}">Sobre nosotros</a></li>
             </ul>
         </div>
 
@@ -114,16 +116,9 @@
         </div>
         @endif
         @endauth
-
-        <div class="sidebar-section">
-            <h3>Información</h3>
-            <ul>
-                <li><a href="{{ route('contacto') }}">Contacto</a></li>
-                <li><a href="{{ route('sobre_nosotros') }}">Sobre nosotros</a></li>
-                <li><a href="/como_se_hizo.pdf" target="_blank">Informe técnico</a></li>
-            </ul>
-        </div>
     </aside>
+
+<div class="layout">
 
     <main>
         @if(session('exito'))
@@ -151,18 +146,48 @@
 
 <script>
 (function() {
+    // Dropdown usuario
     var btn = document.getElementById('header-dropdown-btn');
     var menu = document.getElementById('header-dropdown-menu');
-    if (!btn) return;
-    btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        var open = menu.classList.toggle('abierto');
-        btn.setAttribute('aria-expanded', open);
+    if (btn) {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var open = menu.classList.toggle('abierto');
+            btn.setAttribute('aria-expanded', open);
+        });
+        document.addEventListener('click', function() {
+            menu.classList.remove('abierto');
+            btn.setAttribute('aria-expanded', false);
+        });
+    }
+
+    // Altura del header dinámica
+    var alturaHeader = document.querySelector('header');
+    function setHeaderHeight() {
+        document.documentElement.style.setProperty('--header-h', alturaHeader.offsetHeight + 'px');
+    }
+    setHeaderHeight();
+    window.addEventListener('resize', setHeaderHeight);
+
+    // Sidebar
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebar-overlay');
+    var btnSidebar = document.getElementById('btn-sidebar');
+
+    function abrirSidebar() {
+        sidebar.classList.add('abierto');
+        overlay.classList.add('activo');
+    }
+    function cerrarSidebar() {
+        sidebar.classList.remove('abierto');
+        overlay.classList.remove('activo');
+    }
+
+    btnSidebar.addEventListener('click', function() {
+        sidebar.classList.contains('abierto') ? cerrarSidebar() : abrirSidebar();
     });
-    document.addEventListener('click', function() {
-        menu.classList.remove('abierto');
-        btn.setAttribute('aria-expanded', false);
-    });
+    overlay.addEventListener('click', cerrarSidebar);
+    document.getElementById('btn-cerrar-sidebar').addEventListener('click', cerrarSidebar);
 })();
 </script>
 </body>

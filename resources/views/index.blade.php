@@ -27,26 +27,22 @@ $nombres_visibles = ['Perro' => 'Perros', 'Gato' => 'Gatos', 'Otro' => 'Otros'];
         <a href="{{ route('home') }}" class="btn btn-primary" style="margin-top:1rem">Ver todos</a>
     </div>
 @else
-    <div class="animales-grid">
+    <div class="fotos-grid">
         @foreach($animales as $a)
-        <div class="animal-card">
-            <a href="{{ route('animales.show', $a) }}">
-                @if($a->primeraFoto)
-                    <img src="{{ asset('storage/animales/' . $a->primeraFoto->nombre_archivo) }}"
-                         alt="Foto de {{ $a->nombre }}">
-                @else
-                    <div class="sin-foto">Sin foto</div>
-                @endif
-                <div class="card-body">
-                    <h3>{{ $a->nombre }}</h3>
-                    <p class="meta">
-                        {{ $a->raza ?? 'Desconocida' }}
-                        &middot;
-                        {{ $a->sexo === 'macho' ? 'Macho' : 'Hembra' }}
-                    </p>
+        <a href="{{ route('animales.show', $a) }}" class="foto-tile">
+            @if($a->primeraFoto)
+                <img src="{{ asset('storage/animales/' . $a->primeraFoto->nombre_archivo) }}"
+                     alt="Foto de {{ $a->nombre }}">
+            @else
+                <div class="foto-tile-placeholder">
+                    <span>Sin foto</span>
                 </div>
-            </a>
-        </div>
+            @endif
+            <div class="foto-tile-overlay">
+                <span class="foto-tile-nombre">{{ $a->nombre }}</span>
+                <span class="foto-tile-meta">{{ $a->raza ?? 'Desconocida' }} &middot; {{ $a->sexo === 'macho' ? 'Macho' : 'Hembra' }}</span>
+            </div>
+        </a>
         @endforeach
     </div>
 @endif
