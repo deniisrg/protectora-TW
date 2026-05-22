@@ -37,21 +37,38 @@
    Protectora Web — Estilos Visuales + Estructura
 ============================================================ */
 
-/* --- PALETA 2: OTOÑO CÁLIDO (Activa) --- */
+/* ============================================================
+   🎨 TEMA DE COLORES — edita solo este bloque para cambiar
+      el aspecto completo de la web.
+
+   --bg-body          → fondo general de la página
+   --bg-card          → fondo de tarjetas, formularios, modales
+   --texto-principal  → color del texto normal
+   --texto-suave      → texto secundario, hints, metadatos
+   --color-primario   → botones principales, enlaces activos
+   --color-primario-hover → botón primario al pasar el ratón
+   --color-secundario → header, footer, títulos destacados
+   --color-peligro    → botones de eliminar, alertas de error
+   --color-borde      → bordes de inputs y separadores
+   --radio-borde      → redondez de esquinas (0 = cuadrado)
+============================================================ */
 :root {
-    --bg-body: #fff8f3;
-    --bg-card: #ffffff;
-    --texto-principal: #4a3f35;
-    --texto-suave: #7d7065;
-    --color-primario: #ed8936;
+    --bg-body:              #fff8f3;
+    --bg-card:              #ffffff;
+    --texto-principal:      #4a3f35;
+    --texto-suave:          #7d7065;
+    --color-primario:       #ed8936;
     --color-primario-hover: #dd6b20;
-    --color-secundario: #5c3a21; /* Marrón oscuro del footer y cabecera */
-    --color-peligro: #e53e3e;
-    --color-borde: #fbd38d;
-    --sombra-suave: 0 4px 15px rgba(0, 0, 0, 0.05);
-    --sombra-hover: 0 10px 25px rgba(0, 0, 0, 0.1);
-    --radio-borde: 16px;
+    --color-secundario:     #5c3a21;
+    --color-peligro:        #e53e3e;
+    --color-borde:          #fbd38d;
+    --sombra-suave:         0 4px 15px rgba(0, 0, 0, 0.05);
+    --sombra-hover:         0 10px 25px rgba(0, 0, 0, 0.1);
+    --radio-borde:          16px;
 }
+/* ============================================================
+   FIN DEL TEMA — el resto del CSS no hace falta tocarlo
+============================================================ */
 
 
 /* --- Reset básico --- */
@@ -524,5 +541,78 @@ textarea { min-height: 120px; resize: vertical; }
     .fotos-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 3px;
+    }
+}
+
+/* --- Banner de cookies --- */
+.cookie-banner {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 3rem);
+    max-width: 700px;
+    background: var(--bg-card);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: var(--radio-borde);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    z-index: 9999;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.cookie-banner-oculto {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+}
+
+.cookie-banner-texto {
+    flex: 1;
+}
+
+.cookie-banner-texto strong {
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 0.3rem;
+    color: var(--color-secundario);
+}
+
+.cookie-banner-texto p {
+    font-size: 0.82rem;
+    color: var(--texto-suave);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.cookie-banner-acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+@media (max-width: 540px) {
+    .cookie-banner {
+        flex-direction: column;
+        align-items: stretch;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        transform: none;
+        width: 100%;
+        border-radius: var(--radio-borde) var(--radio-borde) 0 0;
+    }
+    .cookie-banner-oculto {
+        transform: translateY(20px);
+    }
+    .cookie-banner-acciones {
+        flex-direction: row;
+    }
+    .cookie-banner-acciones .btn {
+        flex: 1;
+        text-align: center;
     }
 }

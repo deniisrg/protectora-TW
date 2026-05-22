@@ -133,6 +133,18 @@
 
 </div>
 
+<!-- Banner de cookies -->
+<div id="cookie-banner" class="cookie-banner" style="display:none">
+    <div class="cookie-banner-texto">
+        <strong>🍪 Usamos cookies</strong>
+        <p>Utilizamos cookies propias y de terceros para mejorar tu experiencia, analizar el tráfico y personalizar el contenido. Puedes aceptarlas todas o solo las necesarias.</p>
+    </div>
+    <div class="cookie-banner-acciones">
+        <button id="cookie-rechazar" class="btn btn-gris btn-sm">Solo necesarias</button>
+        <button id="cookie-aceptar" class="btn btn-primary btn-sm">Aceptar todas</button>
+    </div>
+</div>
+
 <footer>
     <p>
         &copy; {{ date('Y') }} NombrePaginaWeb &mdash;
@@ -188,6 +200,31 @@
     });
     overlay.addEventListener('click', cerrarSidebar);
     document.getElementById('btn-cerrar-sidebar').addEventListener('click', cerrarSidebar);
+
+    // Cookies
+    function getCookie(name) {
+        var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+        return match ? match[2] : null;
+    }
+    function setCookie(name, value, days) {
+        var expires = new Date(Date.now() + days * 864e5).toUTCString();
+        document.cookie = name + '=' + value + '; expires=' + expires + '; path=/; SameSite=Lax';
+    }
+
+    var banner = document.getElementById('cookie-banner');
+    if (!getCookie('cookie_consent')) {
+        banner.style.display = 'flex';
+    }
+    document.getElementById('cookie-aceptar').addEventListener('click', function() {
+        setCookie('cookie_consent', 'all', 365);
+        banner.classList.add('cookie-banner-oculto');
+        setTimeout(function() { banner.style.display = 'none'; }, 400);
+    });
+    document.getElementById('cookie-rechazar').addEventListener('click', function() {
+        setCookie('cookie_consent', 'necessary', 365);
+        banner.classList.add('cookie-banner-oculto');
+        setTimeout(function() { banner.style.display = 'none'; }, 400);
+    });
 })();
 </script>
 </body>
