@@ -10,8 +10,16 @@ use App\Http\Controllers\Admin\MensajeController as AdminMensajeController;
 use App\Http\Controllers\Admin\AnimalController as AdminAnimalController;
 use App\Http\Controllers\Admin\SolicitudController as AdminSolicitudController;
 
+// Servir vídeo con soporte de range requests (necesario para HTML5 video)
+Route::get('/video/{nombre}', function ($nombre) {
+    $path = public_path('videos/' . $nombre);
+    abort_if(!file_exists($path), 404);
+    return response()->file($path, ['Content-Type' => 'video/mp4']);
+})->where('nombre', '[a-zA-Z0-9_\-]+\.mp4')->name('video');
+
 // Rutas públicas
 Route::get('/', [AnimalController::class, 'index'])->name('home');
+Route::get('/adoptar', [AnimalController::class, 'adoptar'])->name('adoptar');
 Route::get('/animales/{animal}', [AnimalController::class, 'show'])->name('animales.show');
 Route::get('/contacto', [ContactoController::class, 'create'])->name('contacto');
 Route::post('/contacto', [ContactoController::class, 'store'])->name('contacto.store');

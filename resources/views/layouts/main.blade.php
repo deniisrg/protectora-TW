@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('titulo', 'NombrePaginaWeb')</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
     @stack('styles')
 </head>
@@ -74,10 +75,10 @@
                 <li class="sidebar-grupo">
                     <span class="sidebar-grupo-titulo">Adoptar</span>
                     <ul class="sidebar-subgrupo">
-                        <li><a href="{{ route('home') }}">Todos</a></li>
-                        <li><a href="{{ route('home', ['especie' => 'Perro']) }}">Perros</a></li>
-                        <li><a href="{{ route('home', ['especie' => 'Gato']) }}">Gatos</a></li>
-                        <li><a href="{{ route('home', ['especie' => 'Otro']) }}">Otros</a></li>
+                        <li><a href="{{ route('adoptar') }}">Todos</a></li>
+                        <li><a href="{{ route('adoptar', ['especie' => 'Perro']) }}">Perros</a></li>
+                        <li><a href="{{ route('adoptar', ['especie' => 'Gato']) }}">Gatos</a></li>
+                        <li><a href="{{ route('adoptar', ['especie' => 'Otro']) }}">Otros</a></li>
                     </ul>
                 </li>
                 <li><a href="{{ route('contacto') }}">Contacto</a></li>
@@ -146,14 +147,44 @@
 </div>
 
 <footer>
-    <p>
-        &copy; {{ date('Y') }} NombrePaginaWeb &mdash;
-        <a href="{{ route('sobre_nosotros') }}">Sobre nosotros</a>
-        &nbsp;|&nbsp;
-        <a href="{{ route('contacto') }}">Contacto</a>
-        &nbsp;|&nbsp;
-        <a href="/como_se_hizo.pdf" target="_blank">Informe técnico (PDF)</a>
-    </p>
+    <div class="footer-superior">
+        <div class="footer-col">
+            <h4 class="footer-col-titulo">Contacta con nosotros</h4>
+            <p>Camino Bajo de Huétor, 132<br>18008 Granada</p>
+            <p>T. 958 000 000</p>
+            <p>Email: <a href="mailto:contacto@nombrepaginaweb.es">contacto@nombrepaginaweb.es</a></p>
+        </div>
+        <div class="footer-col">
+            <h4 class="footer-col-titulo">Boletín de novedades</h4>
+            <p>Recibe todas nuestras novedades en tu email</p>
+            <form class="footer-boletin" onsubmit="return false;">
+                <input type="email" placeholder="Tu email">
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+        <div class="footer-col">
+            <h4 class="footer-col-titulo">Síguenos</h4>
+            <div class="footer-redes">
+                <a href="#" class="footer-red" aria-label="Facebook">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                </a>
+                <a href="#" class="footer-red" aria-label="Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+    <hr class="footer-sep">
+    <div class="footer-inferior">
+        <span>&copy; {{ date('Y') }} NombrePaginaWeb. Todos los derechos reservados.</span>
+        <span>
+            <a href="{{ route('sobre_nosotros') }}">Sobre nosotros</a>
+            &nbsp;|&nbsp;
+            <a href="{{ route('contacto') }}">Contacto</a>
+            &nbsp;|&nbsp;
+            <a href="/como_se_hizo.pdf" target="_blank">Informe técnico (PDF)</a>
+        </span>
+    </div>
 </footer>
 
 <script>
@@ -200,6 +231,29 @@
     });
     overlay.addEventListener('click', cerrarSidebar);
     document.getElementById('btn-cerrar-sidebar').addEventListener('click', cerrarSidebar);
+
+    // Carrusel
+    var slides = document.querySelectorAll('.carrusel-slide');
+    var dots   = document.querySelectorAll('.carrusel-dot');
+    if (slides.length) {
+        var actual = 0;
+
+        function irA(n) {
+            slides[actual].classList.remove('activa');
+            dots[actual].classList.remove('activo');
+            actual = (n + slides.length) % slides.length;
+            slides[actual].classList.add('activa');
+            dots[actual].classList.add('activo');
+        }
+
+        document.getElementById('carrusel-prev').addEventListener('click', function() { irA(actual - 1); });
+        document.getElementById('carrusel-next').addEventListener('click', function() { irA(actual + 1); });
+        dots.forEach(function(dot) {
+            dot.addEventListener('click', function() { irA(parseInt(dot.dataset.index)); });
+        });
+
+        setInterval(function() { irA(actual + 1); }, 4000);
+    }
 
     // Cookies
     function getCookie(name) {
