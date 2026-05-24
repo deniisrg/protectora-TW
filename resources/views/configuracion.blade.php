@@ -1,9 +1,16 @@
 @extends('layouts.main')
 
-@section('titulo', 'Configuración — NombrePaginaWeb')
+@section('titulo', 'Configuración — Pawtect')
 
 @section('contenido')
 <h1>Configuración de cuenta</h1>
+
+<div class="config-solo-escritorio">
+    <p>La configuración de cuenta solo está disponible desde un ordenador.</p>
+    <a href="{{ route('perfil') }}" class="btn btn-gris">Volver a mi perfil</a>
+</div>
+
+<div class="config-contenido-escritorio">
 
 {{-- Foto de perfil --}}
 <div class="config-seccion">
@@ -121,4 +128,5 @@
         </form>
     </div>
 </div>
+</div>{{-- fin config-contenido-escritorio --}}
 @endsection

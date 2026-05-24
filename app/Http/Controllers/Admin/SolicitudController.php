@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Animal;
+use App\Models\Notificacion;
 use App\Models\SolicitudAdopcion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,26 +15,22 @@ class SolicitudController extends Controller
     {
         $query = SolicitudAdopcion::with(['animal', 'usuario']);
 
-        // Filtro por nombre de usuario
         if ($request->filled('usuario')) {
             $query->whereHas('usuario', function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->usuario . '%');
             });
         }
 
-        // Filtro por nombre de animal
         if ($request->filled('animal')) {
             $query->whereHas('animal', function ($q) use ($request) {
                 $q->where('nombre', 'like', '%' . $request->animal . '%');
             });
         }
 
-        // Filtro por estado
         if ($request->filled('estado')) {
             $query->where('estado', $request->estado);
         }
 
-        // Ordenación
         $orden = $request->get('orden', 'reciente');
         match ($orden) {
             'antigua'    => $query->orderBy('fecha_solicitud', 'asc'),
@@ -53,7 +50,7 @@ class SolicitudController extends Controller
 
     public function destroy(SolicitudAdopcion $solicitud)
     {
-        // Si estaba pendiente, ejecutar lógica de rechazo antes de borrar
+        // si estaba pendiente hay que liberar el animal
         if ($solicitud->estado === 'pendiente') {
             $solicitud->update(['estado' => 'rechazada']);
 
@@ -94,6 +91,13 @@ class SolicitudController extends Controller
                 ->update(['estado' => 'rechazada']);
         });
 
+        Notificacion::create([
+            'id_usuario' => $solicitud->id_usuario,
+            'tipo'       => 'solicitud_aprobada',
+            'mensaje'    => '¡Enhorabuena! Tu solicitud para adoptar a ' . $solicitud->animal->nombre . ' ha sido aprobada.',
+            'enlace'     => route('mis_solicitudes.show', $solicitud),
+        ]);
+
         return redirect()->route('admin.solicitudes.index')->with('exito', 'Solicitud aprobada.');
     }
 
@@ -114,6 +118,13 @@ class SolicitudController extends Controller
                 ->where('estado', 'en_proceso')
                 ->update(['estado' => 'disponible']);
         }
+
+        Notificacion::create([
+            'id_usuario' => $solicitud->id_usuario,
+            'tipo'       => 'solicitud_rechazada',
+            'mensaje'    => 'Tu solicitud para adoptar a ' . $solicitud->animal->nombre . ' no ha podido ser aprobada.',
+            'enlace'     => route('mis_solicitudes'),
+        ]);
 
         return redirect()->route('admin.solicitudes.index')->with('exito', 'Solicitud rechazada.');
     }

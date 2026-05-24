@@ -9,6 +9,9 @@ use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\Admin\MensajeController as AdminMensajeController;
 use App\Http\Controllers\Admin\AnimalController as AdminAnimalController;
 use App\Http\Controllers\Admin\SolicitudController as AdminSolicitudController;
+use App\Http\Controllers\Admin\ExperienciaController as AdminExperienciaController;
+use App\Http\Controllers\ExperienciaController;
+use App\Http\Controllers\NotificacionController;
 
 // Servir vídeo con soporte de range requests (necesario para HTML5 video)
 Route::get('/video/{nombre}', function ($nombre) {
@@ -24,12 +27,21 @@ Route::get('/animales/{animal}', [AnimalController::class, 'show'])->name('anima
 Route::get('/contacto', [ContactoController::class, 'create'])->name('contacto');
 Route::post('/contacto', [ContactoController::class, 'store'])->name('contacto.store');
 Route::get('/sobre-nosotros', fn() => view('sobre_nosotros'))->name('sobre_nosotros');
+Route::get('/experiencias', [ExperienciaController::class, 'index'])->name('experiencias.index');
 
 // Área de usuario (requiere login)
 Route::middleware('auth')->group(function () {
     Route::get('/adopcion/{animal}', [AdopcionController::class, 'create'])->name('adopcion.create');
     Route::post('/adopcion/{animal}', [AdopcionController::class, 'store'])->name('adopcion.store');
-    Route::get('/mis-solicitudes', [MisSolicitudesController::class, 'index'])->name('mis_solicitudes');
+    Route::get('/mis-solicitudes', fn() => redirect()->route('perfil'))->name('mis_solicitudes');
+    Route::get('/experiencias/crear', [ExperienciaController::class, 'create'])->name('experiencias.create');
+    Route::post('/experiencias', [ExperienciaController::class, 'store'])->name('experiencias.store');
+    Route::get('/mis-solicitudes/{solicitud}', [MisSolicitudesController::class, 'show'])->name('mis_solicitudes.show');
+    Route::get('/notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
+    Route::post('/notificaciones/{notificacion}/leida', [NotificacionController::class, 'marcarLeida'])->name('notificaciones.leida');
+    Route::post('/notificaciones/marcar-todas', [NotificacionController::class, 'marcarTodas'])->name('notificaciones.todas');
+    Route::delete('/notificaciones/{notificacion}', [NotificacionController::class, 'destroy'])->name('notificaciones.destroy');
+    Route::delete('/notificaciones', [NotificacionController::class, 'destroyTodas'])->name('notificaciones.destroy.todas');
     Route::get('/perfil', [PerfilController::class, 'show'])->name('perfil');
     Route::get('/configuracion', [PerfilController::class, 'configuracion'])->name('configuracion');
     Route::post('/configuracion/foto', [PerfilController::class, 'actualizarFoto'])->name('configuracion.foto');
@@ -54,6 +66,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/solicitudes/{solicitud}/aprobar', [AdminSolicitudController::class, 'aprobar'])->name('solicitudes.aprobar');
     Route::post('/solicitudes/{solicitud}/rechazar', [AdminSolicitudController::class, 'rechazar'])->name('solicitudes.rechazar');
     Route::delete('/solicitudes/{solicitud}', [AdminSolicitudController::class, 'destroy'])->name('solicitudes.destroy');
+
+    Route::get('/experiencias', [AdminExperienciaController::class, 'index'])->name('experiencias.index');
+    Route::post('/experiencias/{experiencia}/aprobar', [AdminExperienciaController::class, 'aprobar'])->name('experiencias.aprobar');
+    Route::post('/experiencias/{experiencia}/rechazar', [AdminExperienciaController::class, 'rechazar'])->name('experiencias.rechazar');
 
     Route::get('/mensajes', [AdminMensajeController::class, 'index'])->name('mensajes.index');
     Route::post('/mensajes/{mensaje}/leido', [AdminMensajeController::class, 'marcarLeido'])->name('mensajes.leido');

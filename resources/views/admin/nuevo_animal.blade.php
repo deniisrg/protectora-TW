@@ -2,7 +2,7 @@
 
 @php $modo = isset($animal) ? 'editar' : 'nuevo'; @endphp
 
-@section('titulo', ($modo === 'nuevo' ? 'Nuevo animal' : 'Editar animal') . ' — NombrePaginaWeb')
+@section('titulo', ($modo === 'nuevo' ? 'Nuevo animal' : 'Editar animal') . ' — Pawtect')
 
 @section('contenido')
 <h1>{{ $modo === 'nuevo' ? 'Nuevo animal' : 'Editar animal' }}</h1>

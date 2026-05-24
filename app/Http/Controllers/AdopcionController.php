@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Animal;
 use App\Models\SolicitudAdopcion;
+use App\Models\Notificacion;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -82,6 +84,17 @@ class AdopcionController extends Controller
         ]);
 
         $animal->update(['estado' => 'en_proceso']);
+
+        // Notificar al admin
+        $admin = User::where('es_admin', true)->first();
+        if ($admin) {
+            Notificacion::create([
+                'id_usuario' => $admin->id,
+                'tipo'       => 'solicitud_nueva',
+                'mensaje'    => Auth::user()->name . ' ha solicitado adoptar a ' . $animal->nombre . '.',
+                'enlace'     => route('admin.solicitudes.index'),
+            ]);
+        }
 
         return redirect()->route('animales.show', $animal)->with('exito', '¡Solicitud enviada correctamente!');
     }

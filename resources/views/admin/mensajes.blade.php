@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('titulo', 'Mensajes de contacto — NombrePaginaWeb')
+@section('titulo', 'Mensajes de contacto — Pawtect')
 
 @section('contenido')
 <div class="section-header">

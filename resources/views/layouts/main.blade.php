@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('titulo', 'NombrePaginaWeb')</title>
+    <title>@yield('titulo', 'Pawtect')</title>
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
     @stack('styles')
@@ -13,7 +13,10 @@
 <header>
     <div class="header-top">
         
-        <a href="{{ route('home') }}" class="logo">NombrePaginaWeb</a>
+        <a href="{{ route('home') }}" class="logo">
+            <img src="/logo.png" alt="Pawtect" class="logo-img">
+            <span class="logo-nombre">Pawtect</span>
+        </a>
 
 </header>
 
@@ -22,12 +25,56 @@
     
     <div class="subheader-sesion">
             @auth
+                {{-- Campanita de notificaciones --}}
+                <div class="notif-wrapper">
+                    <button class="notif-btn" id="notif-btn" aria-label="Notificaciones">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        @if($notificaciones_no_leidas > 0)
+                            <span class="notif-badge">{{ $notificaciones_no_leidas > 9 ? '9+' : $notificaciones_no_leidas }}</span>
+                        @endif
+                    </button>
+                    <div class="notif-dropdown" id="notif-dropdown">
+                        <div class="notif-dropdown-header">
+                            <span>Notificaciones</span>
+                            @if($notificaciones_no_leidas > 0)
+                                <form method="POST" action="{{ route('notificaciones.todas') }}">
+                                    @csrf
+                                    <button type="submit" class="notif-marcar-todas">Marcar todas como leídas</button>
+                                </form>
+                            @endif
+                        </div>
+                        @if($notificaciones_recientes->isEmpty())
+                            <p class="notif-vacia">No tienes notificaciones.</p>
+                        @else
+                            <ul class="notif-lista">
+                                @foreach($notificaciones_recientes as $notif)
+                                <li class="notif-item {{ $notif->leida ? '' : 'notif-no-leida' }}">
+                                    <form method="POST" action="{{ route('notificaciones.leida', $notif) }}">
+                                        @csrf
+                                        <button type="submit" class="notif-item-btn">
+                                            <span class="notif-item-texto">{{ $notif->mensaje }}</span>
+                                            <span class="notif-item-fecha">{{ $notif->created_at->diffForHumans() }}</span>
+                                        </button>
+                                    </form>
+                                </li>
+                                @endforeach
+                            </ul>
+                            <a href="{{ route('notificaciones.index') }}" class="notif-ver-todas">Ver todas</a>
+                        @endif
+                    </div>
+                </div>
+
+                <span class="header-tipo">{{ Auth::user()->es_admin ? 'Administrador' : 'Usuario' }}</span>
+
                 <div class="header-dropdown">
                     <button class="header-dropdown-toggle" id="header-dropdown-btn" aria-expanded="false" aria-haspopup="true">
                         @if(Auth::user()->foto_perfil)
                             <img src="{{ Storage::url(Auth::user()->foto_perfil) }}" alt="Foto de perfil" class="header-avatar">
                         @else
-                            <div class="header-avatar header-avatar-inicial">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
+                            <span class="header-avatar header-avatar-inicial">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
                         @endif
                         <span class="header-dropdown-nombre">{{ Auth::user()->name }}</span>
                         <span class="header-dropdown-caret">&#9660;</span>
@@ -81,6 +128,7 @@
                         <li><a href="{{ route('adoptar', ['especie' => 'Otro']) }}">Otros</a></li>
                     </ul>
                 </li>
+                <li><a href="{{ route('experiencias.index') }}">Experiencias</a></li>
                 <li><a href="{{ route('contacto') }}">Contacto</a></li>
                 <li><a href="{{ route('sobre_nosotros') }}">Sobre nosotros</a></li>
             </ul>
@@ -93,6 +141,13 @@
                 <li><a href="{{ route('perfil') }}">Mi perfil</a></li>
                 <li><a href="{{ route('configuracion') }}">Configuración</a></li>
                 <li><a href="{{ route('mis_solicitudes') }}">Mis solicitudes</a></li>
+                <li>
+                    <a href="{{ route('notificaciones.index') }}">Notificaciones
+                        @if($notificaciones_no_leidas > 0)
+                            <span class="sidebar-notif-badge">{{ $notificaciones_no_leidas }}</span>
+                        @endif
+                    </a>
+                </li>
             </ul>
         </div>
         @else
@@ -112,6 +167,7 @@
             <ul>
                 <li><a href="{{ route('admin.animales.index') }}">Gestionar animales</a></li>
                 <li><a href="{{ route('admin.solicitudes.index') }}">Solicitudes</a></li>
+                <li><a href="{{ route('admin.experiencias.index') }}">Experiencias</a></li>
                 <li><a href="{{ route('admin.mensajes.index') }}">Mensajes</a></li>
             </ul>
         </div>
@@ -148,11 +204,15 @@
 
 <footer>
     <div class="footer-superior">
+        <div class="footer-col footer-col-logo">
+            <img src="/logo.png" alt="Pawtect" class="footer-logo-lateral">
+        </div>
         <div class="footer-col">
             <h4 class="footer-col-titulo">Contacta con nosotros</h4>
             <p>Camino Bajo de Huétor, 132<br>18008 Granada</p>
             <p>T. 958 000 000</p>
-            <p>Email: <a href="mailto:contacto@nombrepaginaweb.es">contacto@nombrepaginaweb.es</a></p>
+            <p>Email: <a href="mailto:contacto@pawtect.es">contacto@pawtect.es</a></p>
+            <p><a href="{{ route('contacto') }}">Formulario de contacto</a></p>
         </div>
         <div class="footer-col">
             <h4 class="footer-col-titulo">Boletín de novedades</h4>
@@ -163,7 +223,7 @@
             </form>
         </div>
         <div class="footer-col">
-            <h4 class="footer-col-titulo">Síguenos</h4>
+            <h4 class="footer-col-titulo">Conócenos más</h4>
             <div class="footer-redes">
                 <a href="#" class="footer-red" aria-label="Facebook">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
@@ -172,11 +232,14 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
                 </a>
             </div>
+            <p style="margin-top:0.8rem"><a href="{{ route('sobre_nosotros') }}">Sobre nosotros</a></p>
         </div>
     </div>
     <hr class="footer-sep">
     <div class="footer-inferior">
-        <span>&copy; {{ date('Y') }} NombrePaginaWeb. Todos los derechos reservados.</span>
+        <span class="footer-brand">
+            &copy; {{ date('Y') }} Pawtect. Todos los derechos reservados.
+        </span>
         <span>
             <a href="#">Política de privacidad</a>
             &nbsp;|&nbsp;
@@ -205,14 +268,6 @@
             btn.setAttribute('aria-expanded', false);
         });
     }
-
-    // Altura del header dinámica
-    var alturaHeader = document.querySelector('header');
-    function setHeaderHeight() {
-        document.documentElement.style.setProperty('--header-h', alturaHeader.offsetHeight + 'px');
-    }
-    setHeaderHeight();
-    window.addEventListener('resize', setHeaderHeight);
 
     // Sidebar
     var sidebar = document.getElementById('sidebar');
@@ -255,6 +310,20 @@
         });
 
         setInterval(function() { irA(actual + 1); }, 4000);
+    }
+
+    // notificaciones
+    var notifBtn = document.getElementById('notif-btn');
+    var notifDropdown = document.getElementById('notif-dropdown');
+    if (notifBtn) {
+        notifBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            notifDropdown.classList.toggle('abierto');
+        });
+        document.addEventListener('click', function() {
+            notifDropdown.classList.remove('abierto');
+        });
+        notifDropdown.addEventListener('click', function(e) { e.stopPropagation(); });
     }
 
     // Cookies

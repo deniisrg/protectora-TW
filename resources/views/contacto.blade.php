@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('titulo', 'Contacto — NombrePaginaWeb')
+@section('titulo', 'Contacto — Pawtect')
 
 @section('contenido')
 <h1>Contacto</h1>

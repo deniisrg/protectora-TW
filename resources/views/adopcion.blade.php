@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('titulo', 'Solicitar adopción — NombrePaginaWeb')
+@section('titulo', 'Solicitar adopción — Pawtect')
 
 @section('contenido')
 <h1>Solicitar adopción de {{ $animal->nombre }}</h1>

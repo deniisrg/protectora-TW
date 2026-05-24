@@ -1,8 +1,34 @@
 @extends('layouts.main')
 
-@section('titulo', 'Animales en adopcion — NombrePaginaWeb')
+@section('titulo', 'Animales en adopcion — Pawtect')
 
 @section('contenido')
+
+<div class="imagen-portada">
+    <div class="imagen-portada-titulo">
+        <img src="/logo.png" alt="Pawtect" class="imagen-portada-logo">
+        <span class="imagen-portada-nombre">Pawtect</span>
+    </div>
+</div>
+
+{{-- BIENVENIDA + CONTADORES --}}
+<div class="inicio-bienvenida">
+    @auth
+    <p class="bienvenida-saludo">¡Bienvenido de nuevo, <strong>{{ Auth::user()->name }}</strong>!</p>
+    @endauth
+
+    <div class="contadores">
+        <div class="contador-item">
+            <span class="contador-numero">{{ $total_disponibles }}</span>
+            <span class="contador-label">Esperando hogar</span>
+        </div>
+        <div class="contador-sep"></div>
+        <div class="contador-item">
+            <span class="contador-numero">{{ $total_adoptados }}</span>
+            <span class="contador-label">Ya tienen hogar</span>
+        </div>
+    </div>
+</div>
 
 @if($carrusel->count())
 <div class="carrusel" id="carrusel">
@@ -92,8 +118,8 @@
 
     {{-- Tarjeta Teaming --}}
     <div class="donacion-card donacion-card-teaming">
-        <div class="teaming-icono">🐾</div>
-        <p class="teaming-titulo">NombrePaginaWeb</p>
+        <div class="teaming-icono"><img src="/logo.png" alt="Pawtect" class="teaming-logo"></div>
+        <p class="teaming-titulo">Pawtect</p>
         <a href="#" class="btn-teaming">Únete por 1€ al mes</a>
         <p class="donacion-nota">¿Sabías que por solo 1€ al mes puedes hacer mucho por este refugio?</p>
     </div>

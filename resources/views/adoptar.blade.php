@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('titulo', 'Adoptar — NombrePaginaWeb')
+@section('titulo', 'Adoptar — Pawtect')
 
 @section('contenido')
 <h1>Animales en adopción</h1>

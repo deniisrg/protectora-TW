@@ -29,7 +29,12 @@ class AnimalController extends Controller
             ->limit(6)
             ->get();
 
-        return view('index', compact('animales', 'especies', 'filtro', 'carrusel'));
+        // Contadores
+        $total_disponibles = Animal::where('estado', 'disponible')->count();
+        $total_adoptados   = Animal::where('estado', 'adoptado')->count();
+        $total_en_proceso  = Animal::where('estado', 'en_proceso')->count();
+
+        return view('index', compact('animales', 'especies', 'filtro', 'carrusel', 'total_disponibles', 'total_adoptados', 'total_en_proceso'));
     }
 
     // Página de adopción con grid y filtros

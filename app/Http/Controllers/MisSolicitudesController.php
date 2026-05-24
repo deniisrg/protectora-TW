@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\Auth;
 
 class MisSolicitudesController extends Controller
 {
-    public function index()
+    public function show(SolicitudAdopcion $solicitud)
     {
-        $solicitudes = SolicitudAdopcion::with('animal')
-            ->where('id_usuario', Auth::id())
-            ->orderBy('fecha_solicitud', 'desc')
-            ->get();
+        // Asegurarse de que la solicitud pertenece al usuario logueado
+        abort_if($solicitud->id_usuario !== Auth::id(), 403);
 
-        return view('mis_solicitudes', compact('solicitudes'));
+        $solicitud->load('animal');
+
+        return view('mi_solicitud_detalle', compact('solicitud'));
     }
 }

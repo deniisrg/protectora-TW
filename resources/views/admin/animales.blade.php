@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('titulo', 'Gestionar animales — NombrePaginaWeb')
+@section('titulo', 'Gestionar animales — Pawtect')
 
 @section('contenido')
 @php

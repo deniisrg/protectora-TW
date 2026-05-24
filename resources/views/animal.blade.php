@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('titulo', $animal->nombre . ' — NombrePaginaWeb')
+@section('titulo', $animal->nombre . ' — Pawtect')
 
 @section('contenido')
 @php
