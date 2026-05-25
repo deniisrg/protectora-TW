@@ -7,22 +7,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
     @stack('styles')
+    <script>if(localStorage.getItem('sidebar')==='colapsado')document.documentElement.classList.add('sidebar-colapsado');</script>
 </head>
 <body>
 
+{{-- Logo flotante fijo: abre el sidebar --}}
+<button id="btn-sidebar" class="logo-toggle" aria-label="Abrir menú">
+    <img src="/logo.png" alt="Pawtect">
+</button>
+
 <header>
     <div class="header-top">
-        
         <a href="{{ route('home') }}" class="logo">
-            <img src="/logo.png" alt="Pawtect" class="logo-img">
             <span class="logo-nombre">Pawtect</span>
         </a>
-
+    </div>
 </header>
 
 <div class="subheader">
-    <button id="btn-sidebar" class="btn-hamburguesa">&#9776;</button>
-    
+    <button id="btn-sidebar-movil" class="btn-hamburguesa btn-hamburguesa-movil">&#9776;</button>
+
+    <nav class="nav-superior" id="nav-superior">
+        <a href="{{ route('home') }}">Portada</a>
+        <a href="{{ route('adoptar') }}">Adoptar</a>
+        <a href="{{ route('experiencias.index') }}">Experiencias</a>
+        <a href="{{ route('contacto') }}">Contacto</a>
+        <a href="{{ route('sobre_nosotros') }}">Sobre nosotros</a>
+    </nav>
+
     <div class="subheader-sesion">
             @auth
                 {{-- Campanita de notificaciones --}}
@@ -113,8 +125,9 @@
 
 <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
+<div class="pagina-wrapper">
 <aside id="sidebar" aria-label="Menú lateral">
-    <button id="btn-cerrar-sidebar" class="sidebar-cerrar">&times;</button>
+    <button id="btn-colapsar-sidebar" class="sidebar-cerrar" aria-label="Colapsar menú">&#8592;</button>
 
         <div class="sidebar-section">
             <ul>
@@ -136,7 +149,7 @@
 
         @auth
         <div class="sidebar-section">
-            <h3>Mi cuenta</h3>
+            <h3>Mi cuenta</h4>
             <ul>
                 <li><a href="{{ route('perfil') }}">Mi perfil</a></li>
                 <li><a href="{{ route('configuracion') }}">Configuración</a></li>
@@ -152,7 +165,7 @@
         </div>
         @else
         <div class="sidebar-section">
-            <h3>Acceso</h3>
+            <h3>Acceso</h4>
             <ul>
                 <li><a href="{{ route('login') }}">Iniciar sesión</a></li>
                 <li><a href="{{ route('register') }}">Crear cuenta</a></li>
@@ -163,7 +176,7 @@
         @auth
         @if(Auth::user()->es_admin)
         <div class="sidebar-section">
-            <h3>Administración</h3>
+            <h3>Administración</h4>
             <ul>
                 <li><a href="{{ route('admin.animales.index') }}">Gestionar animales</a></li>
                 <li><a href="{{ route('admin.solicitudes.index') }}">Solicitudes</a></li>
@@ -189,6 +202,7 @@
     </main>
 
 </div>
+</div> {{-- pagina-wrapper --}}
 
 <!-- Banner de cookies -->
 <div id="cookie-banner" class="cookie-banner" style="display:none">
@@ -273,6 +287,10 @@
     var sidebar = document.getElementById('sidebar');
     var overlay = document.getElementById('sidebar-overlay');
     var btnSidebar = document.getElementById('btn-sidebar');
+    var btnSidebarMovil = document.getElementById('btn-sidebar-movil');
+    var btnColapsar = document.getElementById('btn-colapsar-sidebar');
+
+    function esMobil() { return window.innerWidth <= 700; }
 
     function abrirSidebar() {
         sidebar.classList.add('abierto');
@@ -283,11 +301,40 @@
         overlay.classList.remove('activo');
     }
 
+    // hamburguesa: en móvil abre overlay, en escritorio expande
     btnSidebar.addEventListener('click', function() {
-        sidebar.classList.contains('abierto') ? cerrarSidebar() : abrirSidebar();
+        if (esMobil()) {
+            sidebar.classList.contains('abierto') ? cerrarSidebar() : abrirSidebar();
+        } else {
+            document.documentElement.classList.remove('sidebar-colapsado');
+            localStorage.setItem('sidebar', 'abierto');
+        }
     });
+
+    // flecha: en móvil cierra, en escritorio colapsa
+    if (btnColapsar) {
+        btnColapsar.addEventListener('click', function() {
+            if (esMobil()) {
+                cerrarSidebar();
+            } else {
+                document.documentElement.classList.add('sidebar-colapsado');
+                localStorage.setItem('sidebar', 'colapsado');
+            }
+        });
+    }
+
+    if (btnSidebarMovil) {
+        btnSidebarMovil.addEventListener('click', function() {
+            sidebar.classList.contains('abierto') ? cerrarSidebar() : abrirSidebar();
+        });
+    }
+
     overlay.addEventListener('click', cerrarSidebar);
-    document.getElementById('btn-cerrar-sidebar').addEventListener('click', cerrarSidebar);
+
+    // restaurar estado al cargar
+    if (!esMobil() && localStorage.getItem('sidebar') === 'colapsado') {
+        document.documentElement.classList.add('sidebar-colapsado');
+    }
 
     // Carrusel
     var slides = document.querySelectorAll('.carrusel-slide');

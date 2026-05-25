@@ -50,21 +50,6 @@ class SolicitudController extends Controller
 
     public function destroy(SolicitudAdopcion $solicitud)
     {
-        // si estaba pendiente hay que liberar el animal
-        if ($solicitud->estado === 'pendiente') {
-            $solicitud->update(['estado' => 'rechazada']);
-
-            $pendientes = SolicitudAdopcion::where('id_animal', $solicitud->id_animal)
-                ->where('estado', 'pendiente')
-                ->count();
-
-            if ($pendientes === 0) {
-                Animal::where('id', $solicitud->id_animal)
-                    ->where('estado', 'en_proceso')
-                    ->update(['estado' => 'disponible']);
-            }
-        }
-
         $solicitud->delete();
 
         return redirect()->route('admin.solicitudes.index')->with('exito', 'Solicitud eliminada.');
@@ -108,16 +93,6 @@ class SolicitudController extends Controller
         }
 
         $solicitud->update(['estado' => 'rechazada']);
-
-        $pendientes = SolicitudAdopcion::where('id_animal', $solicitud->id_animal)
-            ->where('estado', 'pendiente')
-            ->count();
-
-        if ($pendientes === 0) {
-            Animal::where('id', $solicitud->id_animal)
-                ->where('estado', 'en_proceso')
-                ->update(['estado' => 'disponible']);
-        }
 
         Notificacion::create([
             'id_usuario' => $solicitud->id_usuario,

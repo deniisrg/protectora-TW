@@ -63,7 +63,6 @@ $textos = ['disponible' => 'Disponible', 'en_proceso' => 'En proceso', 'adoptado
 
     <div class="animal-info">
         <dl>
-            <dt>Especie</dt>  <dd>{{ $animal->especie }}</dd>
             <dt>Raza</dt>     <dd>{{ $animal->raza ?? 'Desconocida' }}</dd>
             <dt>Edad</dt>     <dd>{{ edad_texto_blade($animal->edad_meses) }}</dd>
             <dt>Sexo</dt>     <dd>{{ $animal->sexo === 'macho' ? 'Macho' : 'Hembra' }}</dd>
@@ -80,7 +79,7 @@ $textos = ['disponible' => 'Disponible', 'en_proceso' => 'En proceso', 'adoptado
         @endif
 
         <div style="margin-top:1.5rem">
-            @if($animal->estado === 'disponible')
+            @if($animal->estado !== 'adoptado')
                 @auth
                     <a href="{{ route('adopcion.create', $animal) }}" class="btn btn-naranja">Solicitar adopcion</a>
                 @else
@@ -89,8 +88,6 @@ $textos = ['disponible' => 'Disponible', 'en_proceso' => 'En proceso', 'adoptado
                         para solicitar la adopcion de {{ $animal->nombre }}.
                     </p>
                 @endauth
-            @elseif($animal->estado === 'en_proceso')
-                <p>Este animal tiene una solicitud de adopcion en tramite.</p>
             @else
                 <p>Este animal ya ha sido adoptado. ¡Que alegria!</p>
             @endif

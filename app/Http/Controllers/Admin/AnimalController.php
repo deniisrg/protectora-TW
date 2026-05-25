@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Animal;
 use App\Models\FotoAnimal;
+use App\Models\Notificacion;
+use App\Models\SolicitudAdopcion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -69,9 +71,24 @@ class AnimalController extends Controller
 
     public function destroy(Animal $animal)
     {
+        // notificar a usuarios con solicitudes pendientes antes de borrar
+        $pendientes = SolicitudAdopcion::where('id_animal', $animal->id)
+            ->where('estado', 'pendiente')
+            ->get();
+
+        foreach ($pendientes as $solicitud) {
+            Notificacion::create([
+                'id_usuario' => $solicitud->id_usuario,
+                'tipo'       => 'solicitud_rechazada',
+                'mensaje'    => 'Tu solicitud para adoptar a ' . $animal->nombre . ' ha sido cancelada porque el animal ya no está disponible.',
+                'enlace'     => route('mis_solicitudes'),
+            ]);
+        }
+
         foreach ($animal->fotos as $foto) {
             Storage::disk('public')->delete('animales/' . $foto->nombre_archivo);
         }
+
         $animal->delete();
         return redirect()->route('admin.animales.index')->with('exito', 'Animal eliminado correctamente.');
     }

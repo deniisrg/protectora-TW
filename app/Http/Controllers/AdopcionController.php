@@ -14,8 +14,8 @@ class AdopcionController extends Controller
     // Muestra el formulario de adopción
     public function create(Animal $animal)
     {
-        if ($animal->estado !== 'disponible') {
-            return redirect()->route('animales.show', $animal)->with('error', 'Este animal no está disponible.');
+        if ($animal->estado === 'adoptado') {
+            return redirect()->route('animales.show', $animal)->with('error', 'Este animal ya ha sido adoptado.');
         }
 
         $ya_solicitado = SolicitudAdopcion::where('id_animal', $animal->id)
@@ -29,7 +29,7 @@ class AdopcionController extends Controller
     // Procesa el envío del formulario
     public function store(Request $request, Animal $animal)
     {
-        if ($animal->estado !== 'disponible') {
+        if ($animal->estado === 'adoptado') {
             return redirect()->route('animales.show', $animal);
         }
 
@@ -82,8 +82,6 @@ class AdopcionController extends Controller
             'acepta_visitas'         => $request->acepta_visitas,
             'mensaje'                => $request->mensaje,
         ]);
-
-        $animal->update(['estado' => 'en_proceso']);
 
         // Notificar al admin
         $admin = User::where('es_admin', true)->first();

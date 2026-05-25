@@ -10,7 +10,7 @@
 
     <dl class="info-equipo">
         <dt>Desarrolladores</dt>
-        <dd><!-- Nombres aqui --></dd>
+        <dd>Jairo Robles Balderas, Hugo Bautista Arenas, Denis Reverón Gordillo</dd>
 
         <dt>Universidad</dt>
         <dd>Universidad de Granada</dd>

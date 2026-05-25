@@ -8,11 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EsAdmin
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  Closure(Request): (Response)  $next
-     */
+    // solo deja pasar si el usuario está logueado y es admin
     public function handle(Request $request, Closure $next): Response
     {
         if (!auth()->check() || !auth()->user()->es_admin) {

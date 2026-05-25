@@ -42,6 +42,7 @@ class AnimalController extends Controller
     {
         $especies = ['Perro', 'Gato', 'Otro'];
         $filtro   = $request->query('especie');
+        $busqueda = $request->query('q');
 
         $query = Animal::with('primeraFoto')->where('estado', '!=', 'adoptado');
 
@@ -49,9 +50,16 @@ class AnimalController extends Controller
             $query->where('especie', $filtro);
         }
 
+        if ($busqueda) {
+            $query->where(function($q) use ($busqueda) {
+                $q->where('nombre', 'like', '%' . $busqueda . '%')
+                  ->orWhere('raza', 'like', '%' . $busqueda . '%');
+            });
+        }
+
         $animales = $query->orderBy('fecha_ingreso', 'desc')->get();
 
-        return view('adoptar', compact('animales', 'especies', 'filtro'));
+        return view('adoptar', compact('animales', 'especies', 'filtro', 'busqueda'));
     }
 
     // Ficha detalle de un animal
